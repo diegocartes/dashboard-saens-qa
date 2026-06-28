@@ -155,14 +155,26 @@ export default function Dashboard(){
   const inputRef=useRef(null);
 
   // cargar datos persistidos al iniciar
-  useEffect(()=>{ try{ const raw=localStorage.getItem(LS_KEY); if(raw){ const o=JSON.parse(raw); if(o&&Array.isArray(o.recs)&&o.recs.length){ setRecs(o.recs); setFileName(o.fileName||''); setSavedAt(o.savedAt||''); } } }catch(e){} },[]);
+  useEffect(()=>{
+    // 1. localStorage para render instantáneo
+    try{ const raw=localStorage.getItem(LS_KEY); if(raw){ const o=JSON.parse(raw); if(o&&Array.isArray(o.recs)&&o.recs.length){ setRecs(o.recs); setFileName(o.fileName||''); setSavedAt(o.savedAt||''); } } }catch(e){}
+    // 2. Vercel Blob como fuente compartida (silencioso en dev local)
+    fetch('/api/dashboard').then(r=>r.ok?r.json():null).then(data=>{
+      if(data&&Array.isArray(data.recs)&&data.recs.length){
+        setRecs(data.recs); setFileName(data.fileName||''); setSavedAt(data.savedAt||'');
+        try{ localStorage.setItem(LS_KEY, JSON.stringify(data)); }catch(e){}
+      }
+    }).catch(()=>{});
+  },[]);
 
   const onFile=useCallback(async(file)=>{ try{ setErr(''); const buf=await file.arrayBuffer(); const r=parse(buf); const when=new Date().toISOString();
     setRecs(r); setFileName(file.name); setSavedAt(when); setSel(null); setProc('Todos');
-    try{ localStorage.setItem(LS_KEY, JSON.stringify({recs:r, fileName:file.name, savedAt:when})); }catch(e){}
+    const payload={recs:r, fileName:file.name, savedAt:when};
+    try{ localStorage.setItem(LS_KEY, JSON.stringify(payload)); }catch(e){}
+    fetch('/api/dashboard',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).catch(()=>{});
   }catch(e){ setErr(e.message||String(e)); } },[]);
   const onDrop=useCallback(e=>{ e.preventDefault(); setDrag(false); const file=e.dataTransfer.files&&e.dataTransfer.files[0]; if(file)onFile(file); },[onFile]);
-  const clearData=useCallback(()=>{ try{ localStorage.removeItem(LS_KEY); }catch(e){} setRecs(null); setFileName(''); setSavedAt(''); setSel(null); setErr(''); },[]);
+  const clearData=useCallback(()=>{ try{ localStorage.removeItem(LS_KEY); }catch(e){} fetch('/api/dashboard',{method:'DELETE'}).catch(()=>{}); setRecs(null); setFileName(''); setSavedAt(''); setSel(null); setErr(''); },[]);
 
   const savedLabel = savedAt ? ('Guardado · '+new Date(savedAt).toLocaleString('es-CL',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'})) : '';
 
