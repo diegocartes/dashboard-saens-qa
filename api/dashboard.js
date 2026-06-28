@@ -8,14 +8,16 @@ export default async function handler(req, res) {
     try {
       const { blobs } = await list({ prefix: BLOB });
       if (!blobs.length) return res.status(200).json(EMPTY);
-      const data = await fetch(blobs[0].url).then(r => r.json());
+      const data = await fetch(blobs[0].url, {
+        headers: { Authorization: `Bearer ${process.env.BLOB_READ_WRITE_TOKEN}` }
+      }).then(r => r.json());
       return res.status(200).json(data);
     } catch { return res.status(200).json(EMPTY); }
   }
 
   if (req.method === 'POST') {
     try {
-      await put(BLOB, JSON.stringify(req.body), { access: 'public', addRandomSuffix: false });
+      await put(BLOB, JSON.stringify(req.body), { addRandomSuffix: false });
       return res.status(200).json({ ok: true });
     } catch (e) { return res.status(500).json({ error: e.message }); }
   }

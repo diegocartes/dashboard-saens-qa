@@ -10,10 +10,10 @@ export default async function handler(req, res) {
     listResult = r.blobs.length;
   } catch (e) { listError = e.message; }
 
-  // Test put con payload mínimo
+  // Test put sin access (store privado)
   let putOk = false, putError = null;
   try {
-    await put('debug-test.json', JSON.stringify({ test: true }), { access: 'public', addRandomSuffix: false });
+    await put('debug-test.json', JSON.stringify({ test: true }), { addRandomSuffix: false });
     putOk = true;
   } catch (e) { putError = e.message; }
 
