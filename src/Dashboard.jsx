@@ -132,8 +132,8 @@ function Header({global,fileName,savedLabel,onReload,onClear}){
   return (<div className="sticky top-0 z-10" style={{background:C.navy,boxShadow:'0 2px 8px rgba(16,36,58,.18)'}}>
     <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-3 flex items-center gap-4">
       <div className="bg-white rounded-md px-2 py-1 flex items-center" style={{height:38}}><img src={LOGO} alt="SAENS" style={{height:24}}/></div>
-      <div className="flex-1 min-w-0"><div className="text-white font-bold leading-tight">Control de Protocolos QA/QC · TK-AB</div>
-        <div className="text-[11px] truncate" style={{color:'#A9C0E0'}}>Reparación TK de Hormigón – Tren AB · SC-1513 / SPO2514 · CMZ</div></div>
+      <div className="flex-1 min-w-0"><div className="text-white font-bold leading-tight">Control de Protocolos QA/QC</div>
+        <div className="text-[11px] truncate" style={{color:'#A9C0E0'}}>Seguimiento y Control de Avance · Gestión de Protocolos de Calidad</div></div>
       {fileName&&<div className="hidden sm:flex flex-col items-end mr-1">
         <div className="flex items-center gap-1.5 text-[11px] px-2 py-1 rounded-md" style={{background:'rgba(255,255,255,.12)',color:'#ffffff'}}><FileSpreadsheet size={13}/><span className="max-w-[160px] truncate">{fileName}</span></div>
         {savedLabel&&<div className="flex items-center gap-1 text-[10px] mt-0.5" style={{color:'#A9C0E0'}}><Database size={11}/>{savedLabel}</div>}</div>}
@@ -275,7 +275,10 @@ export default function Dashboard(){
         </div>
       </div>
 
-      <div className="text-[11px] text-center pb-2" style={{color:C.muted}}>SAENS Polímeros y Revestimientos Ltda. · Reparación TK de Hormigón – Tren AB · SC-1513 / SPO2514 · datos: {fileName}</div>
+      <div className="text-[11px] text-center pb-2 leading-5" style={{color:C.muted}}>
+        <div>Dashboard de Control Protocolos · QA/QC · Diego Cartes Solorza</div>
+        <div>Datos {fileName||'—'} · SAENS Polímeros y Revestimientos Ltda.</div>
+      </div>
     </div>
   </div>);
 }
