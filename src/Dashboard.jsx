@@ -225,7 +225,7 @@ export default function Dashboard(){
     {l:'No iniciados', v:m.estCount['NO INICIADO'], c:'#94A3B8'},
   ];
   const find=re=>m.elements.find(e=>re.test(e));
-  const sur=find(/Sur/i),norte=find(/Norte/i),este=find(/Este/i),oeste=find(/Oeste/i),floor=find(/Piso/i);
+  const sur=find(/Sur/i),norte=find(/Norte/i),este=find(/\bEste\b/i),oeste=find(/Oeste/i),floor=find(/Piso/i);
   const procOpts=[{v:'Todos',l:'Todos'}].concat(m.protos.map(p=>({v:p,l:protoMeta(p).short})));
 
   return (<div className="min-h-screen w-full" style={{background:C.bp,color:C.ink,fontFamily:'ui-sans-serif,system-ui,Segoe UI,Roboto,Arial'}}>
