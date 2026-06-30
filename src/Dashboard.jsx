@@ -195,7 +195,8 @@ export default function Dashboard(){
   const getVal=(e,p,n)=>{ if(!m)return null; if(proc==='Todos'){ const vs=m.protos.map(pr=>m.byKey.get(e+'|'+p+'|'+n+'|'+pr)).map(r=>r?r.avance:null).filter(x=>x!=null); return vs.length?vs.reduce((a,b)=>a+b,0)/vs.length:null; } const r=m.byKey.get(e+'|'+p+'|'+n+'|'+proc); return r?(r.avance==null?0:r.avance):null; };
   const getEst=(e,p,n)=>{ if(!m)return null; if(proc==='Todos'){ const es=m.protos.map(pr=>m.byKey.get(e+'|'+p+'|'+n+'|'+pr)).filter(Boolean).map(estadoOf); if(!es.length)return null; if(es.includes('RECHAZADO'))return'RECHAZADO'; let min=null,mr=99; es.forEach(x=>{const rk=RANK[x]==null?99:RANK[x]; if(rk<mr){mr=rk;min=x;}}); return min; } const r=m.byKey.get(e+'|'+p+'|'+n+'|'+proc); return r?estadoOf(r):null; };
   const cellStyle=(e,p,n)=>{ if(mode==='estado'){ const es=getEst(e,p,n); if(!es)return{bg:'#F8FAFC',fg:'#94A3B8',txt:''}; return{bg:EST[es].c,fg:EST[es].t,txt:pctTxt(getVal(e,p,n))}; } const v=getVal(e,p,n); const h=heat(v); return{bg:h.bg,fg:h.fg,txt:pctTxt(v)}; };
-  const wallProps=(elem,accent)=>({ title:elem, avg:m.wallAvg[elem], accent, panos:m.dims[elem].panos, niveles:m.dims[elem].niveles,
+  const avgForElem=(elem)=>{ const {panos,niveles}=m.dims[elem]; const vals=[]; panos.forEach(p=>niveles.forEach(n=>{const v=getVal(elem,p,n);if(v!=null)vals.push(v);})); return vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:0; };
+  const wallProps=(elem,accent)=>({ title:elem, avg:avgForElem(elem), accent, panos:m.dims[elem].panos, niveles:m.dims[elem].niveles,
     getCell:(p,n)=>cellStyle(elem,p,n), isSel:(p,n)=>!!(sel&&sel.elem===elem&&sel.pano===p&&sel.nivel===n), onSelect:(p,n)=>setSel({elem,pano:p,nivel:n}) });
 
   const fileInput=(<input ref={inputRef} type="file" accept=".xlsx,.xlsm" className="hidden" onChange={e=>{const f=e.target.files&&e.target.files[0]; if(f)onFile(f); e.target.value='';}}/>);
